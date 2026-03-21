@@ -4,9 +4,9 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useToastStore } from '@/lib/store/useToast';
 
 const typeStyles = {
-  success: 'bg-emerald-500/95',
-  error: 'bg-rose-500/95',
-  info: 'bg-slate-900/90',
+  success: 'bg-green-900/90 border border-green-500/50 text-green-300',
+  error: 'bg-red-900/90 border border-red-500/50 text-red-300',
+  info: 'bg-gray-900/90 border border-gray-600/50 text-gray-200',
 };
 
 export default function Toast() {
@@ -20,7 +20,7 @@ export default function Toast() {
           <motion.button
             key={toast.id}
             type="button"
-            className={`pointer-events-auto min-w-[220px] max-w-[85vw] rounded-xl px-4 py-3 text-left text-sm text-white shadow-lg ${typeStyles[toast.type]}`}
+            className={`pointer-events-auto min-w-[220px] max-w-[85vw] rounded-xl px-4 py-3 text-left text-sm shadow-lg backdrop-blur-sm ${typeStyles[toast.type]}`}
             initial={{ opacity: 0, y: -12, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.96 }}

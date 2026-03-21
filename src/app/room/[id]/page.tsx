@@ -47,6 +47,7 @@ export default function RoomPage({ params }: RoomPageProps) {
   }, [initialize]);
 
   const room = useMemo(() => rooms.find((item) => item.id === params.id), [params.id, rooms]);
+  const displayRoomCode = room?.roomCode ?? params.id;
 
   useEffect(() => {
     setLogicMode(false);
@@ -206,9 +207,18 @@ export default function RoomPage({ params }: RoomPageProps) {
   }, [dealtCount, phaseStage, targetHandCount]);
 
   const handleExit = useCallback(() => {
+    const currentStatus = room?.status === 'playing' || phaseStage === 'playing' ? 'playing' : 'waiting';
+
+    if (
+      currentStatus === 'playing' &&
+      !window.confirm('确定要中途退出吗？当前局将记为放弃')
+    ) {
+      return;
+    }
+
     setCurrentRoomId(null);
     router.push('/hall');
-  }, [router, setCurrentRoomId]);
+  }, [phaseStage, room?.status, router, setCurrentRoomId]);
 
   const handleReady = useCallback(() => {
     if (phaseStage !== 'waiting') {
@@ -513,5 +523,12 @@ export default function RoomPage({ params }: RoomPageProps) {
     );
   }
 
-  return <GameBackground>{content}</GameBackground>;
+  return (
+    <GameBackground>
+      <div className="pointer-events-none absolute left-4 top-3 z-20 text-gray-400 text-sm">
+        房间号：{displayRoomCode}
+      </div>
+      {content}
+    </GameBackground>
+  );
 }

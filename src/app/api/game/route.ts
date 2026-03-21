@@ -7,11 +7,17 @@ import type {
   FangpaofaPersistPlayerSnapshot,
 } from '@/lib/games/fangpaofa/persistence';
 
+import { isAdminAuthenticatedRequest, unauthorizedResponse } from '@/lib/admin-auth';
+
 export const dynamic = 'force-dynamic';
 
 const ADMIN_CONFIG_HINT = '后台读取接口不可用，请检查 SUPABASE_SERVICE_ROLE_KEY，并确认已执行 supabase/schema.sql。';
 
 export async function GET(request: NextRequest) {
+  if (!isAdminAuthenticatedRequest(request)) {
+    return unauthorizedResponse();
+  }
+
   const roomId = request.nextUrl.searchParams.get('roomId');
 
   if (roomId) {

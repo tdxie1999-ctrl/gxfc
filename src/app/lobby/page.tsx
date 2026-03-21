@@ -16,29 +16,21 @@ const lobbyCards = [
     title: '亲友圈',
     icon: '🀄🎲',
     description: '好友约局，随时开桌',
-    bg: 'from-[#E8F5E9] to-[#C8E6C9]',
-    text: 'text-[#1B5E20]',
   },
   {
     title: '娱乐场',
     icon: '🃏',
     description: '查看桌位，快速入场',
-    bg: 'from-[#E3F2FD] to-[#BBDEFB]',
-    text: 'text-[#0D47A1]',
   },
   {
     title: '创建房间',
     icon: '☕',
     description: '自定玩法，邀人对局',
-    bg: 'from-[#FFF3E0] to-[#FFCC80]',
-    text: 'text-[#E65100]',
   },
   {
     title: '加入房间',
     icon: '🎋',
     description: '输入房号，直接进桌',
-    bg: 'from-[#F3E5F5] to-[#E1BEE7]',
-    text: 'text-[#6A1B9A]',
   },
 ] as const;
 
@@ -142,30 +134,30 @@ export default function LobbyPage() {
   };
 
   return (
-    <GameBackground>
+    <GameBackground className="before:absolute before:inset-0 before:bg-[linear-gradient(180deg,#0d1f0f_0%,#1a3a20_100%)] after:absolute after:inset-x-0 after:top-0 after:h-[36%] after:bg-[radial-gradient(circle_at_top,rgba(217,163,56,0.12),transparent_55%)]">
       <main className="mx-auto flex h-full w-full max-w-7xl flex-col px-4 py-4 text-white sm:px-6">
-        <header className="rounded-3xl bg-black/35 px-4 py-3 shadow-[0_16px_40px_rgba(0,0,0,0.28)] backdrop-blur-sm">
+        <header className="rounded-3xl border-b border-yellow-600/40 bg-black/50 px-4 py-3 shadow-[0_16px_40px_rgba(0,0,0,0.38)] backdrop-blur-sm">
           <div className="flex items-center justify-between gap-4">
             <div className="flex min-w-0 items-center gap-3">
               <div
-                className="h-12 w-12 shrink-0 rounded-full border-2 border-white bg-cover bg-center"
+                className="h-12 w-12 shrink-0 rounded-full border-2 border-yellow-600/60 bg-cover bg-center"
                 style={{ backgroundImage: `url(${profile?.avatar_url ?? '/assets/avatars/default.png'})` }}
               />
               <div className="min-w-0 text-sm">
-                <p className="truncate font-bold text-white">{profile?.nickname ?? '游客玩家'}</p>
-                <p className="truncate text-white/60">ID:{profile?.id?.slice(0, 6) ?? '375531'}</p>
+                <p className="truncate font-bold text-yellow-300">{profile?.nickname ?? '游客玩家'}</p>
+                <p className="truncate text-yellow-400/75">ID:{profile?.id?.slice(0, 6) ?? '375531'}</p>
                 <div className="flex flex-wrap items-center gap-3 text-xs">
-                  <span>💎 {profile?.diamonds ?? 10}</span>
-                  <span className="text-[#F2C94C]">💰 {profile?.balance?.toFixed(2) ?? '1000.00'}</span>
+                  <span className="text-yellow-400">钻石 {profile?.diamonds ?? 10}</span>
+                  <span className="text-yellow-300">金币 {profile?.balance?.toFixed(2) ?? '1000.00'}</span>
                 </div>
               </div>
             </div>
 
-            <div className="brand-gold-text text-xl font-black tracking-[0.2em]">恭喜发财</div>
+            <div className="brand-gold-text text-xl font-black tracking-[0.2em] text-yellow-400">恭喜发财</div>
 
             <button
               type="button"
-              className="h-10 w-10 rounded-2xl bg-white/10 text-xl backdrop-blur-sm"
+              className="h-10 w-10 rounded-2xl border border-yellow-600/40 bg-black/40 text-xl text-yellow-400 backdrop-blur-sm"
               onClick={() => (isGuest ? pushToast('请先登录', 'info') : setShowSettings(true))}
             >
               ⚙
@@ -173,7 +165,7 @@ export default function LobbyPage() {
           </div>
         </header>
 
-        <div className="mt-3 overflow-hidden rounded-2xl bg-black/30 px-3 py-2 text-sm text-white/85">
+        <div className="mt-3 overflow-hidden rounded-2xl border border-yellow-700/30 bg-black/45 px-3 py-2 text-sm text-yellow-100">
           <div className="marquee-track whitespace-nowrap">
             📢 欢迎来到恭喜发财，祝您财运亨通！新春活动火热进行中，创建房间仅需 2 钻石，邀请牌友马上开局。
           </div>
@@ -186,38 +178,38 @@ export default function LobbyPage() {
                 key={card.title}
                 type="button"
                 onClick={() => handleCardClick(index)}
-                className={`rounded-3xl bg-gradient-to-br ${card.bg} ${card.text} min-h-[140px] p-5 text-left shadow-[0_20px_40px_rgba(15,23,42,0.15)] transition hover:-translate-y-1 active:scale-[0.98]`}
+                className="min-h-[140px] rounded-3xl border border-yellow-600/60 bg-gradient-to-br from-[#1e4a28] to-[#0d2b15] p-5 text-left text-white shadow-[0_22px_42px_rgba(0,0,0,0.35)] transition hover:-translate-y-1 hover:border-yellow-400 hover:shadow-lg hover:shadow-yellow-900/30 active:scale-[0.98]"
               >
                 <div className="text-3xl">{card.icon}</div>
-                <h2 className="mt-3 text-2xl font-black">{card.title}</h2>
-                <p className="mt-2 text-sm opacity-85">{card.description}</p>
+                <h2 className="mt-3 text-2xl font-black text-yellow-300">{card.title}</h2>
+                <p className="mt-2 text-sm text-white/80">{card.description}</p>
               </button>
             ))}
           </div>
         </section>
 
-        <div className="mb-3 rounded-2xl bg-black/25 px-4 py-2 text-center text-xs text-white/70">
+        <div className="mb-3 rounded-2xl border border-yellow-700/30 bg-black/40 px-4 py-2 text-center text-xs text-yellow-100/85">
           当前大厅桌数 {rooms.length} · 最近一局：{lastPlayedLabel}
         </div>
 
-        <footer className="grid grid-cols-5 gap-2 rounded-3xl bg-black/35 p-2 text-xs shadow-[0_16px_40px_rgba(0,0,0,0.28)] backdrop-blur-sm">
-          <button type="button" className="rounded-2xl px-2 py-3 hover:bg-white/10" onClick={() => guardAction(() => void handleSignin())}>
+        <footer className="grid grid-cols-5 gap-2 rounded-3xl border border-yellow-700/30 bg-black/60 p-2 text-xs shadow-[0_16px_40px_rgba(0,0,0,0.32)] backdrop-blur-sm">
+          <button type="button" className="rounded-2xl px-2 py-3 text-yellow-300 hover:bg-white/10" onClick={() => guardAction(() => void handleSignin())}>
             <div className="text-lg">📍</div>
             <div>签到</div>
           </button>
-          <button type="button" className="rounded-2xl px-2 py-3 hover:bg-white/10" onClick={() => guardAction(() => setShowStats(true))}>
+          <button type="button" className="rounded-2xl px-2 py-3 text-yellow-300 hover:bg-white/10" onClick={() => guardAction(() => setShowStats(true))}>
             <div className="text-lg">🏆</div>
             <div>战绩</div>
           </button>
-          <button type="button" className="rounded-2xl px-2 py-3 hover:bg-white/10" onClick={() => guardAction(() => router.push('/lottery'))}>
+          <button type="button" className="rounded-2xl px-2 py-3 text-white hover:bg-white/10" onClick={() => guardAction(() => router.push('/lottery'))}>
             <div className="text-lg">🎰</div>
             <div>购彩</div>
           </button>
-          <button type="button" className="rounded-2xl px-2 py-3 hover:bg-white/10" onClick={() => guardAction(() => pushToast('功能开发中', 'info'))}>
+          <button type="button" className="rounded-2xl px-2 py-3 text-white hover:bg-white/10" onClick={() => guardAction(() => pushToast('功能开发中', 'info'))}>
             <div className="text-lg">🤝</div>
             <div>合作</div>
           </button>
-          <button type="button" className="rounded-2xl px-2 py-3 hover:bg-white/10" onClick={() => setShowNotice(true)}>
+          <button type="button" className="rounded-2xl px-2 py-3 text-yellow-300 hover:bg-white/10" onClick={() => setShowNotice(true)}>
             <div className="text-lg">📢</div>
             <div>公告</div>
           </button>
@@ -227,7 +219,7 @@ export default function LobbyPage() {
           <button
             type="button"
             onClick={() => router.push('/login')}
-            className="fixed bottom-20 right-4 z-40 rounded-full bg-gradient-to-r from-[#F2994A] to-[#F2C94C] px-5 py-3 text-sm font-bold text-white shadow-2xl"
+            className="fixed bottom-20 right-4 z-40 rounded-full border border-yellow-500/40 bg-gradient-to-r from-[#8c6a16] to-[#d4a62a] px-5 py-3 text-sm font-bold text-black shadow-2xl"
           >
             去登录
           </button>

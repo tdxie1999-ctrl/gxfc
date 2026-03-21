@@ -2,7 +2,6 @@
 
 import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import GameBackground from '@/components/layout/GameBackground';
 import { useAuthStore } from '@/lib/store/useAuth';
 import { useToastStore } from '@/lib/store/useToast';
 
@@ -65,70 +64,78 @@ export default function RegisterPage() {
   };
 
   return (
-    <GameBackground>
-      <main className="flex h-full w-full items-center justify-center px-4 py-6">
+    <main className="min-h-screen w-full bg-gradient-to-b from-[#0a1f0d] to-[#1a3a20] px-4 py-6">
+      <div className="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-[420px] flex-col justify-center">
+        <button
+          type="button"
+          onClick={() => router.push('/login')}
+          className="mb-4 w-fit text-sm text-yellow-400/70"
+        >
+          ← 返回登录
+        </button>
+
         <form
           onSubmit={handleSubmit}
-          className="w-full max-w-[420px] rounded-3xl bg-white/95 p-7 text-black shadow-2xl backdrop-blur"
+          className="w-full rounded-xl border border-yellow-700/50 bg-black/50 p-6 text-white shadow-2xl backdrop-blur"
         >
-          <h1 className="mb-6 text-center text-2xl font-black text-gray-900">注册账号</h1>
+          <h1 className="mb-6 text-center text-2xl font-black text-yellow-300">注册账号</h1>
 
           <div className="space-y-4">
             <label className="block">
-              <span className="mb-1 block text-sm text-gray-600">用户名</span>
+              <span className="mb-2 block text-sm text-yellow-100/80">用户名</span>
               <input
                 type="text"
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
-                className="h-11 w-full rounded-xl border border-gray-200 px-3 outline-none transition focus:border-[#4A90D9]"
+                className="h-11 w-full rounded-xl border border-yellow-700/40 bg-black/30 px-3 text-white outline-none transition focus:border-yellow-500"
                 placeholder="3-16位字母数字下划线"
                 autoComplete="off"
               />
             </label>
 
             <label className="block">
-              <span className="mb-1 block text-sm text-gray-600">昵称</span>
+              <span className="mb-2 block text-sm text-yellow-100/80">昵称</span>
               <input
                 type="text"
                 value={nickname}
                 onChange={(event) => setNickname(event.target.value)}
-                className="h-11 w-full rounded-xl border border-gray-200 px-3 outline-none transition focus:border-[#4A90D9]"
+                className="h-11 w-full rounded-xl border border-yellow-700/40 bg-black/30 px-3 text-white outline-none transition focus:border-yellow-500"
                 placeholder="2-8位中文或字母"
                 autoComplete="off"
               />
             </label>
 
             <label className="block">
-              <span className="mb-1 block text-sm text-gray-600">密码</span>
+              <span className="mb-2 block text-sm text-yellow-100/80">密码</span>
               <input
                 type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                className="h-11 w-full rounded-xl border border-gray-200 px-3 outline-none transition focus:border-[#4A90D9]"
+                className="h-11 w-full rounded-xl border border-yellow-700/40 bg-black/30 px-3 text-white outline-none transition focus:border-yellow-500"
                 placeholder="至少6位"
                 autoComplete="new-password"
               />
             </label>
 
             <label className="block">
-              <span className="mb-1 block text-sm text-gray-600">确认密码</span>
+              <span className="mb-2 block text-sm text-yellow-100/80">确认密码</span>
               <input
                 type="password"
                 value={confirmPassword}
                 onChange={(event) => setConfirmPassword(event.target.value)}
-                className="h-11 w-full rounded-xl border border-gray-200 px-3 outline-none transition focus:border-[#4A90D9]"
+                className="h-11 w-full rounded-xl border border-yellow-700/40 bg-black/30 px-3 text-white outline-none transition focus:border-yellow-500"
                 placeholder="请再次输入密码"
                 autoComplete="new-password"
               />
             </label>
 
             <label className="block">
-              <span className="mb-1 block text-sm text-gray-600">邀请码（可选）</span>
+              <span className="mb-2 block text-sm text-yellow-100/80">邀请码（可选）</span>
               <input
                 type="text"
                 value={inviteCode}
                 onChange={(event) => setInviteCode(event.target.value)}
-                className="h-11 w-full rounded-xl border border-gray-200 px-3 outline-none transition focus:border-[#4A90D9]"
+                className="h-11 w-full rounded-xl border border-yellow-700/40 bg-black/30 px-3 text-white outline-none transition focus:border-yellow-500"
                 placeholder="不填也可注册"
                 autoComplete="off"
               />
@@ -138,19 +145,19 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="mt-6 h-12 w-full rounded-xl bg-gradient-to-r from-[#27AE60] to-[#6FCF97] text-lg font-bold text-white shadow-lg disabled:opacity-60"
+            className="mt-6 h-12 w-full rounded-xl bg-yellow-600 font-bold text-black transition hover:bg-yellow-500 disabled:opacity-60"
           >
             {loading ? '注册中...' : '注 册'}
           </button>
 
-          <p className="mt-4 text-center text-sm text-gray-500">
+          <p className="mt-4 text-center text-sm text-gray-400">
             已有账号？
-            <button type="button" className="ml-1 text-[#4A90D9]" onClick={() => router.push('/login')}>
+            <button type="button" className="ml-1 text-yellow-400" onClick={() => router.push('/login')}>
               去登录
             </button>
           </p>
         </form>
-      </main>
-    </GameBackground>
+      </div>
+    </main>
   );
 }

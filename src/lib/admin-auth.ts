@@ -1,9 +1,9 @@
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
-export const ADMIN_ENTRY_KEY = 'gxfc2026';
+export const ADMIN_ENTRY_KEY = process.env.ADMIN_ENTRY_KEY ?? 'gxfc2026';
 export const ADMIN_ENTRY_PATH = `/admin/${ADMIN_ENTRY_KEY}`;
-export const ADMIN_PASSWORD = 'gxfc888888';
+export const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? 'gxfc888888';
 export const ADMIN_COOKIE_NAME = 'gxfc_admin_session';
 
 const ADMIN_COOKIE_VALUE = 'gxfc_admin_ok_2026';

@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import BallNumber from "@/components/lottery/BallNumber";
 import {
   CATEGORY_TABS,
+  CATEGORY_TAB_ODDS,
   COLOR_LABELS,
   LIANMA_TYPES,
   NOT_IN_TYPES,
@@ -74,8 +75,8 @@ function ZodiacChip({
 }
 
 export default function BetPanel({ issueNo, balance, onSubmitBet }: BetPanelProps) {
-  const [activeCategory, setActiveCategory] = useState<CategoryId>("colorWave");
-  const [stake, setStake] = useState(20);
+  const [activeCategory, setActiveCategory] = useState<CategoryId | null>(null);
+  const [stake, setStake] = useState(1);
   const [status, setStatus] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -102,6 +103,10 @@ export default function BetPanel({ issueNo, balance, onSubmitBet }: BetPanelProp
   );
 
   const currentDraft = useMemo<BetDraft>(() => {
+    if (!activeCategory) {
+      return { valid: false, reason: "请先选择玩法类型。" };
+    }
+
     switch (activeCategory) {
       case "colorWave":
         if (colorWaveSelection.length === 0) {
@@ -230,6 +235,7 @@ export default function BetPanel({ issueNo, balance, onSubmitBet }: BetPanelProp
   ]);
 
   const estimatedAmount = currentDraft.valid ? currentDraft.units * stake : 0;
+  const canEditStake = currentDraft.valid;
 
   function clearCurrentSelection() {
     switch (activeCategory) {
@@ -270,8 +276,13 @@ export default function BetPanel({ issueNo, balance, onSubmitBet }: BetPanelProp
       return;
     }
 
-    if (!Number.isFinite(stake) || stake <= 0) {
-      setStatus({ type: "error", text: "单注金额必须大于 0。" });
+    if (!activeCategory) {
+      setStatus({ type: "error", text: "请先选择玩法类型。" });
+      return;
+    }
+
+    if (!Number.isFinite(stake) || stake < 1) {
+      setStatus({ type: "error", text: "单注金额最低 1 元。" });
       return;
     }
     if (!currentDraft.valid) {
@@ -320,9 +331,13 @@ export default function BetPanel({ issueNo, balance, onSubmitBet }: BetPanelProp
                 ? "border-[#ffd457] bg-[#ffd457] text-[#742400]"
                 : "border-white/20 bg-[#2f1010]/70 text-[#f9ead1] hover:bg-[#472020]"
             }`}
-            onClick={() => setActiveCategory(tab.id)}
+            onClick={() => {
+              setActiveCategory(tab.id);
+              setStatus(null);
+            }}
           >
-            {tab.label}
+            <span>{tab.label}</span>
+            <span className="ml-1 opacity-85">1赔{CATEGORY_TAB_ODDS[tab.id]}</span>
           </button>
         ))}
       </div>
@@ -548,7 +563,11 @@ export default function BetPanel({ issueNo, balance, onSubmitBet }: BetPanelProp
           min={1}
           step={1}
           value={stake}
-          onChange={(event) => setStake(Number(event.target.value))}
+          disabled={!canEditStake}
+          onChange={(event) => {
+            const nextValue = Number(event.target.value);
+            setStake(Number.isFinite(nextValue) ? Math.max(1, nextValue) : 1);
+          }}
           className="w-24 rounded-lg border border-white/30 bg-[#2f1010] px-2 py-1 text-right text-sm text-white outline-none focus:border-[#ffd457]"
         />
       </div>
@@ -590,7 +609,7 @@ export default function BetPanel({ issueNo, balance, onSubmitBet }: BetPanelProp
           type="button"
           className="flex-1 rounded-lg bg-gradient-to-r from-[#ffd457] to-[#f6b728] px-3 py-2 text-sm font-semibold text-[#6b2200] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-70"
           onClick={() => void handleSubmit()}
-          disabled={submitting}
+          disabled={submitting || !activeCategory}
         >
           {submitting ? "下注中..." : "立即下注"}
         </button>

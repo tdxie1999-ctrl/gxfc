@@ -1,6 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 
 export interface SettlementPlayer {
   id: string;
@@ -32,6 +33,18 @@ export default function Settlement({
   onReplay,
   onShare,
 }: SettlementProps) {
+  const router = useRouter();
+
+  const handleReplay = () => {
+    onClose();
+    onReplay?.();
+  };
+
+  const handleExitRoom = () => {
+    onClose();
+    router.push('/hall');
+  };
+
   return (
     <AnimatePresence>
       {open ? (
@@ -120,10 +133,17 @@ export default function Settlement({
                 </button>
                 <button
                   type="button"
-                  onClick={onReplay}
-                  className="h-12 rounded-2xl bg-gradient-to-r from-[#F2994A] to-[#F2C94C] px-6 text-sm font-bold text-white"
+                  onClick={handleReplay}
+                  className="h-12 rounded-2xl bg-yellow-600 px-6 text-sm font-bold text-black"
                 >
                   再来一局
+                </button>
+                <button
+                  type="button"
+                  onClick={handleExitRoom}
+                  className="h-12 rounded-2xl bg-gray-700 px-6 text-sm text-white"
+                >
+                  退出房间
                 </button>
                 <button
                   type="button"

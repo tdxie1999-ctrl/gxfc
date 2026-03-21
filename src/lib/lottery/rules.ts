@@ -78,6 +78,27 @@ export const ZHENGMA_PLAY_OPTIONS: ZhengMaPlayOption[] = [
 
 const RED_NUMBERS = new Set([1, 2, 7, 8, 12, 13, 18, 19, 23, 24, 29, 30, 34, 35, 40, 45, 46]);
 const BLUE_NUMBERS = new Set([3, 4, 9, 10, 14, 15, 20, 25, 26, 31, 36, 37, 41, 42, 47, 48]);
+const GREEN_NUMBERS = new Set([5, 6, 11, 16, 17, 21, 22, 27, 28, 32, 33, 38, 39, 43, 44, 49]);
+
+export const LOTTERY_ODDS = {
+  teMa: 47,
+  colorWave: 1.97,
+  teXiao: 3.08,
+  zhengMa: 8,
+  lianMaErQuanZhong: 21,
+} as const;
+
+export const CATEGORY_TAB_ODDS: Record<CategoryId, number> = {
+  colorWave: LOTTERY_ODDS.colorWave,
+  teMa: LOTTERY_ODDS.teMa,
+  teXiao: LOTTERY_ODDS.teXiao,
+  zhengMa: LOTTERY_ODDS.zhengMa,
+  zhengTe: LOTTERY_ODDS.zhengMa,
+  zhengMa1to6: LOTTERY_ODDS.zhengMa,
+  lianMa: LOTTERY_ODDS.lianMaErQuanZhong,
+  yiXiao: LOTTERY_ODDS.teXiao,
+  ziXuanBuZhong: LOTTERY_ODDS.lianMaErQuanZhong,
+};
 
 export const ZODIAC_NUMBER_MAP: Record<Zodiac, number[]> = {
   鼠: [1, 13, 25, 37, 49],
@@ -118,6 +139,9 @@ export function getBallColor(number: number): LotteryColor {
   }
   if (BLUE_NUMBERS.has(number)) {
     return 'blue';
+  }
+  if (GREEN_NUMBERS.has(number)) {
+    return 'green';
   }
   return 'green';
 }

@@ -228,7 +228,8 @@ export default function TableLayout({
           </button>
         </aside>
 
-        <section className="relative min-h-[380px] rounded-[36px] border border-[#8B6914]/35 bg-[radial-gradient(circle_at_center,_#1a6b3c_0%,_#14532d_38%,_#0d3d1f_100%)] p-6 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04)]">
+        <section className="relative min-h-[380px] rounded-[36px] border border-[#8B6914]/35 bg-[#1a4a2e] bg-[radial-gradient(ellipse_at_center,_#1e5c38_0%,_#0d2b1a_100%)] p-6 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04)]">
+          <div className="pointer-events-none absolute inset-0 rounded-[50%] bg-[#1e6b3c] opacity-40" />
           <div
             className="absolute inset-0 rounded-[36px] opacity-[0.05]"
             style={{
@@ -275,7 +276,7 @@ export default function TableLayout({
         </aside>
       </section>
 
-      <section className="mt-4 rounded-3xl border border-white/10 bg-black/24 px-3 py-2 backdrop-blur-sm">
+      <section className="mt-4 rounded-3xl border border-white/10 bg-black/40 px-3 py-2 backdrop-blur-sm">
         {handArea}
       </section>
 

@@ -43,18 +43,18 @@ export default function PokerCard({
   const textColor =
     card.suit === 'joker'
       ? card.rank === 'BJ'
-        ? 'text-[#a31717]'
-        : 'text-[#1f2937]'
+        ? 'text-red-500'
+        : 'text-gray-900'
       : isRedSuit(card.suit)
-        ? 'text-[#d62d20]'
-        : 'text-[#111827]';
+        ? 'text-red-500'
+        : 'text-gray-900';
 
   const content = (
     <div
       className={clsx(
         width,
         height,
-        'relative rounded-lg border bg-white shadow-md transition',
+        'relative rounded border bg-white shadow-md transition',
         selected ? '-translate-y-3 border-[#f4c542] ring-2 ring-[#f4c542]/70' : 'border-slate-300',
         onClick && 'cursor-pointer hover:-translate-y-1'
       )}
