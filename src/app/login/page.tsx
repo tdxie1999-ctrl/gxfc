@@ -43,6 +43,10 @@ export default function LoginPage() {
   };
 
   const handleLogin = async () => {
+    if (loading) {
+      return;
+    }
+
     if (!username.trim() || !password.trim()) {
       pushToast('请输入账号和密码', 'error');
       return;

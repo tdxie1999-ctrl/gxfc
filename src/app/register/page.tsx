@@ -23,6 +23,10 @@ export default function RegisterPage() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    if (loading) {
+      return;
+    }
+
     if (!usernameRegex.test(username)) {
       pushToast('用户名需为3-16位字母数字下划线', 'error');
       return;

@@ -80,6 +80,16 @@ async function readAuthSettings(): Promise<SupabaseAuthSettings | null> {
 function normalizeAuthError(message: string) {
   const lower = message.toLowerCase();
 
+  if (
+    lower.includes('load failed') ||
+    lower.includes('failed to fetch') ||
+    lower.includes('network request failed') ||
+    lower.includes('networkerror') ||
+    lower.includes('fetch failed')
+  ) {
+    return '当前账号服务连接失败。已确认线上配置指向的 Supabase 地址不可达，请更新 Supabase 项目 URL 和 Key 后再试。';
+  }
+
   if (lower.includes('email not confirmed')) {
     return '当前 Supabase 已开启邮箱确认。请先在 Supabase 后台关闭 Confirm email（邮箱确认）后再试。';
   }
@@ -133,19 +143,24 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   initialize: async () => {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-    if (session?.user) {
-      setGuestStorage(false);
-      set({ user: session.user, isGuest: false, initialized: true });
-      await get().refreshProfile();
-      return;
+      if (session?.user) {
+        setGuestStorage(false);
+        set({ user: session.user, isGuest: false, initialized: true });
+        await get().refreshProfile();
+        return;
+      }
+
+      const guest = typeof window !== 'undefined' && localStorage.getItem('guest') === 'true';
+      set({ user: null, profile: null, isGuest: guest, initialized: true });
+    } catch {
+      const guest = typeof window !== 'undefined' && localStorage.getItem('guest') === 'true';
+      set({ user: null, profile: null, isGuest: guest, initialized: true });
     }
-
-    const guest = typeof window !== 'undefined' && localStorage.getItem('guest') === 'true';
-    set({ user: null, profile: null, isGuest: guest, initialized: true });
   },
 
   login: async (username, password) => {
