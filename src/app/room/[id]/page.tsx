@@ -375,7 +375,7 @@ export default function RoomPage({ params }: RoomPageProps) {
         roomConfig={room.config}
       />
     );
-  } else if (logicMode) {
+  } else if (room.gameType === 'fangpaofa' || logicMode) {
     content = (
       <FangpaofaTable
         roomId={params.id}

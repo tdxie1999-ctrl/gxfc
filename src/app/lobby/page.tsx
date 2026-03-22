@@ -241,7 +241,7 @@ export default function LobbyPage() {
         <div className="space-y-3 text-sm text-slate-700">
           <p>1. 新春活动进行中，创建房间仅需 2 钻石。</p>
           <p>2. 游客可浏览大厅，完整功能请登录后使用。</p>
-          <p>3. 六合彩模块与真实牌局逻辑将在后续阶段持续开放。</p>
+          <p>3. 跑得快、打筒子、放炮罚的真实牌局已开放，六合彩与后台功能继续迭代。</p>
         </div>
       </Modal>
 
