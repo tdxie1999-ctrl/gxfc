@@ -394,127 +394,211 @@ export default function PaodekuaiTable({
 
   return (
     <>
-      <main className="mx-auto flex h-full w-full max-w-7xl flex-col gap-4 px-4 py-4 md:px-6">
-        <header className="grid gap-4 lg:grid-cols-[1.6fr_1fr]">
-          <section className="rounded-3xl border border-white/15 bg-black/30 p-4 backdrop-blur-sm">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <p className="text-xs uppercase tracking-[0.28em] text-white/50">Phase 5 / 跑得快</p>
-                <h1 className="brand-gold-text mt-1 text-2xl font-black tracking-[0.2em]">{roomTitle}</h1>
-                <p className="mt-1 text-xs text-white/45">
-                  {resolvedRoomLabel} · 房号 {resolvedRoomCode}
-                </p>
-              </div>
-              <div className="flex flex-wrap items-center gap-3 text-sm text-white/80">
-                <span>牌型 {formatPatternName(state)}</span>
-                <span>剩余弃牌 {state.deckRemainder.length}</span>
-                <span>当前 {currentPlayer?.nickname ?? '未知'}</span>
-              </div>
-            </div>
-            <div className="mt-4 rounded-2xl bg-white/5 p-3 text-sm text-white/80">
-              <p>{state.lastAction}</p>
-              <p className="mt-1 text-xs text-white/55">{statusText}</p>
-              <p className="mt-1 text-xs text-white/55">
-                规则：{state.config.cardCount}张 / {state.config.fourWithThree ? '四带三' : '四带二'} /{' '}
-                {state.config.heartsTenDouble ? '红桃10翻倍' : '红桃10不翻倍'} /{' '}
-                {state.config.smallJokerDouble ? '小王翻倍' : '小王不翻倍'} / 托管 {state.config.autoPlaySeconds}s
-              </p>
-            </div>
-            <div className="mt-3 flex justify-end">
-              <button
-                type="button"
-                onClick={exitRoom}
-                className="rounded-xl border border-white/15 bg-white/8 px-4 py-2 text-sm font-semibold text-white"
-              >
-                退出房间
-              </button>
-            </div>
-          </section>
+      <main className="mx-auto flex h-full w-full max-w-[1600px] flex-col gap-5 px-4 py-4 md:px-6">
+        <header className="relative overflow-hidden rounded-[34px] border border-[#d4a017]/14 bg-[linear-gradient(180deg,#0d1726_0%,#09111d_100%)] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.3)]">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(233,194,92,0.14),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(39,174,96,0.12),_transparent_30%)]" />
 
-          <section className="overflow-hidden rounded-2xl border border-white/15 bg-black/30 backdrop-blur-sm">
-            <table className="w-full text-left text-sm text-white/85">
-              <thead className="bg-white/10 text-xs uppercase tracking-[0.2em] text-white/60">
-                <tr>
-                  <th className="px-3 py-2">玩家</th>
-                  <th className="px-3 py-2">手牌</th>
-                  <th className="px-3 py-2">积分</th>
-                </tr>
-              </thead>
-              <tbody>
-                {state.players.map((player, index) => (
-                  <tr
-                    key={player.userId}
-                    className={index === state.currentPlayerIndex ? 'bg-[#D4A017]/10' : 'border-t border-white/10'}
-                  >
-                    <td className="px-3 py-2 font-medium">{player.nickname}</td>
-                    <td className="px-3 py-2">{player.hand.length}</td>
-                    <td className="px-3 py-2">{player.score}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </section>
-        </header>
+          <div className="relative grid gap-5 xl:grid-cols-[minmax(0,1.2fr)_360px]">
+            <section className="space-y-4">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="rounded-full border border-[#d4a017]/18 bg-[#d4a017]/10 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-[#f5d77a]">
+                      真实牌局
+                    </span>
+                    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-white/45">
+                      Phase 5
+                    </span>
+                  </div>
+                  <h1 className="brand-gold-text mt-4 text-3xl font-black tracking-[0.12em]">{roomTitle}</h1>
+                  <p className="mt-2 text-sm text-white/58">
+                    {resolvedRoomLabel} · 房号 {resolvedRoomCode}
+                  </p>
+                </div>
 
-        <section className="grid gap-4 lg:grid-cols-[1.2fr_1fr]">
-          <div className="grid gap-4">
-            <div className="grid gap-4 md:grid-cols-2">
-              {opponents.map((player, index) => (
-                <div key={player.userId} className="space-y-3">
-                  <PlayerSeat
-                    name={player.nickname}
-                    handCount={player.hand.length}
-                    huXi={0}
-                    menZi={0}
-                    score={player.score}
-                    isCurrent={state.currentPlayerIndex === index + 1}
-                    isBot={player.isBot}
-                  />
-                  <div className="rounded-2xl border border-white/10 bg-black/20 p-3">
-                    <div className="mb-2 text-xs text-white/60">对手手牌</div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {player.hand.slice(0, 8).map((card) => (
-                        <PokerCard key={card.id} card={card} faceDown compact />
-                      ))}
-                      {player.hand.length > 8 ? (
-                        <div className="flex items-center rounded-lg bg-white/10 px-2 text-xs text-white/70">
-                          +{player.hand.length - 8}
-                        </div>
-                      ) : null}
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  <div className="rounded-[24px] border border-white/10 bg-black/25 px-4 py-3">
+                    <p className="text-[10px] uppercase tracking-[0.22em] text-white/38">当前轮到</p>
+                    <p className="mt-2 text-base font-bold text-white">{currentPlayer?.nickname ?? '未知'}</p>
+                  </div>
+                  <div className="rounded-[24px] border border-white/10 bg-black/25 px-4 py-3">
+                    <p className="text-[10px] uppercase tracking-[0.22em] text-white/38">牌型</p>
+                    <p className="mt-2 text-base font-bold text-white">{formatPatternName(state)}</p>
+                  </div>
+                  <div className="rounded-[24px] border border-white/10 bg-black/25 px-4 py-3">
+                    <p className="text-[10px] uppercase tracking-[0.22em] text-white/38">剩余牌</p>
+                    <p className="mt-2 text-base font-bold text-white">{state.deckRemainder.length}</p>
+                  </div>
+                  <div className="rounded-[24px] border border-white/10 bg-black/25 px-4 py-3">
+                    <p className="text-[10px] uppercase tracking-[0.22em] text-white/38">托管</p>
+                    <p className="mt-2 text-base font-bold text-white">{state.config.autoPlaySeconds}s</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
+                <section className="rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(0,0,0,0.2))] p-5">
+                  <p className="text-xs uppercase tracking-[0.3em] text-white/40">局内播报</p>
+                  <p className="mt-3 text-lg font-semibold text-white">{state.lastAction}</p>
+                  <p className="mt-2 text-sm leading-7 text-white/62">{statusText}</p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <span className="rounded-full border border-white/10 bg-white/6 px-3 py-1 text-xs text-white/72">
+                      {state.config.cardCount} 张发牌
+                    </span>
+                    <span className="rounded-full border border-white/10 bg-white/6 px-3 py-1 text-xs text-white/72">
+                      {state.config.fourWithThree ? '四带三' : '四带二'}
+                    </span>
+                    <span className="rounded-full border border-white/10 bg-white/6 px-3 py-1 text-xs text-white/72">
+                      {state.config.heartsTenDouble ? '红桃10翻倍' : '红桃10不翻倍'}
+                    </span>
+                    <span className="rounded-full border border-white/10 bg-white/6 px-3 py-1 text-xs text-white/72">
+                      {state.config.smallJokerDouble ? '小王翻倍' : '小王不翻倍'}
+                    </span>
+                  </div>
+                </section>
+
+                <section className="rounded-[30px] border border-white/10 bg-black/25 p-5">
+                  <p className="text-xs uppercase tracking-[0.3em] text-white/40">房间节奏</p>
+                  <div className="mt-4 space-y-3 text-sm text-white/70">
+                    <div className="flex items-center justify-between rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3">
+                      <span>基础分</span>
+                      <span className="font-semibold text-white">{state.config.basePoint}</span>
+                    </div>
+                    <div className="flex items-center justify-between rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3">
+                      <span>翻倍阈值</span>
+                      <span className="font-semibold text-white">{state.config.doubleThreshold}</span>
+                    </div>
+                    <div className="flex items-center justify-between rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3">
+                      <span>抽水比例</span>
+                      <span className="font-semibold text-white">{state.config.rakePercent}%</span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+            </section>
+
+            <aside className="space-y-3">
+              {state.players.map((player, index) => (
+                <div
+                  key={player.userId}
+                  className={`rounded-[26px] border px-4 py-4 ${
+                    index === state.currentPlayerIndex
+                      ? 'border-[#d4a017]/30 bg-[#d4a017]/10'
+                      : 'border-white/10 bg-white/[0.04]'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-bold text-white">{player.nickname}</p>
+                      <p className="mt-1 text-xs text-white/45">
+                        {player.isBot ? 'AI 托管中' : '真人在线'} · 手牌 {player.hand.length}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">积分</p>
+                      <p className="mt-1 text-2xl font-black text-[#f6d46c]">{player.score}</p>
                     </div>
                   </div>
                 </div>
               ))}
-            </div>
 
-            <section className="rounded-3xl border border-white/15 bg-black/25 p-4 backdrop-blur-sm">
-              <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.25em] text-white/50">中央出牌区</p>
-                  <p className="mt-1 text-sm text-white/70">
-                    {state.lastPlay
-                      ? `${state.players[state.lastPlay.playerIndex]?.nickname ?? '玩家'} 上一手`
-                      : '当前无人出牌'}
-                  </p>
-                </div>
-                {selectedPattern ? (
-                  <span className="rounded-full bg-[#D4A017]/20 px-3 py-1 text-xs text-[#f6d46c]">
-                    已选牌型：{selectedPattern.type}
-                  </span>
-                ) : (
-                  <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/60">未选择牌组</span>
-                )}
-              </div>
-
-              <div className="min-h-[88px] rounded-2xl border border-dashed border-white/10 bg-white/5 p-3">
-                <div className="flex flex-wrap gap-2">
-                  {state.lastPlay?.cards.map((card) => <PokerCard key={`last-${card.id}`} card={card} />)}
-                </div>
-              </div>
-            </section>
+              <button
+                type="button"
+                onClick={exitRoom}
+                className="flex h-14 w-full items-center justify-center rounded-[26px] border border-white/10 bg-white/6 text-sm font-bold text-white transition hover:bg-white/10"
+              >
+                退出房间
+              </button>
+            </aside>
           </div>
+        </header>
 
-          <section className="space-y-4">
+        <section className="grid min-h-0 flex-1 gap-5 xl:grid-cols-[minmax(0,1.15fr)_420px]">
+          <section className="relative overflow-hidden rounded-[34px] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(22,72,52,0.98),rgba(7,16,27,0.98))] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.24)]">
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(242,182,79,0.08),_transparent_34%),linear-gradient(180deg,transparent,rgba(0,0,0,0.18))]" />
+            <div className="pointer-events-none absolute left-[-15%] top-[58%] h-56 w-56 rounded-full bg-[#103523] opacity-80 blur-3xl" />
+            <div className="pointer-events-none absolute right-[-12%] top-[8%] h-52 w-52 rounded-full bg-[#0f2f55] opacity-60 blur-3xl" />
+
+            <div className="relative z-10 space-y-5">
+              <div className="grid gap-4 md:grid-cols-2">
+                {opponents.map((player, index) => (
+                  <div key={player.userId} className="rounded-[28px] border border-white/10 bg-black/18 p-4 backdrop-blur-sm">
+                    <PlayerSeat
+                      name={player.nickname}
+                      handCount={player.hand.length}
+                      huXi={0}
+                      menZi={0}
+                      score={player.score}
+                      isCurrent={state.currentPlayerIndex === index + 1}
+                      isBot={player.isBot}
+                      align="left"
+                    />
+                    <div className="mt-4 rounded-[24px] border border-white/8 bg-black/22 p-4">
+                      <div className="mb-3 flex items-center justify-between gap-3">
+                        <p className="text-xs uppercase tracking-[0.24em] text-white/38">对手手牌区</p>
+                        <span className="rounded-full bg-white/8 px-3 py-1 text-[11px] text-white/55">
+                          已持牌 {player.hand.length}
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {player.hand.slice(0, 8).map((card) => (
+                          <PokerCard key={card.id} card={card} faceDown compact />
+                        ))}
+                        {player.hand.length > 8 ? (
+                          <div className="flex h-14 items-center rounded-xl border border-white/8 bg-white/6 px-3 text-xs font-semibold text-white/72">
+                            +{player.hand.length - 8}
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <section className="rounded-[32px] border border-[#ebc86c]/16 bg-[radial-gradient(circle_at_center,rgba(21,62,43,0.94),rgba(8,16,28,0.96))] p-5 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04)]">
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.3em] text-white/40">中央出牌区</p>
+                    <p className="mt-2 text-lg font-semibold text-white">
+                      {state.lastPlay
+                        ? `${state.players[state.lastPlay.playerIndex]?.nickname ?? '玩家'} 刚刚出牌`
+                        : '本轮还没人出牌'}
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedPattern ? (
+                      <span className="rounded-full border border-[#ebc86c]/20 bg-[#ebc86c]/10 px-3 py-1.5 text-xs font-semibold text-[#f6d46c]">
+                        已选牌型：{selectedPattern.type}
+                      </span>
+                    ) : (
+                      <span className="rounded-full border border-white/10 bg-white/6 px-3 py-1.5 text-xs text-white/55">
+                        未选择牌组
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="mt-5 min-h-[220px] rounded-[28px] border border-dashed border-white/12 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] p-5">
+                  {state.lastPlay?.cards.length ? (
+                    <div className="flex min-h-[180px] flex-wrap items-center justify-center gap-3">
+                      {state.lastPlay.cards.map((card) => (
+                        <PokerCard key={`last-${card.id}`} card={card} />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex min-h-[180px] items-center justify-center text-center">
+                      <div>
+                        <p className="text-base font-semibold text-white/72">等待首位玩家出牌</p>
+                        <p className="mt-2 text-sm text-white/42">中央会显示上一手牌型，方便判断跟牌和压制关系。</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </section>
+            </div>
+          </section>
+
+          <aside className="flex min-h-0 flex-col gap-4">
             <PlayerSeat
               name={humanPlayer.nickname}
               handCount={humanPlayer.hand.length}
@@ -522,18 +606,34 @@ export default function PaodekuaiTable({
               menZi={0}
               score={humanPlayer.score}
               isCurrent={state.currentPlayerIndex === 0}
+              align="left"
             />
 
-            <section className="rounded-3xl border border-white/15 bg-black/25 p-4 backdrop-blur-sm">
-              <p className="text-xs uppercase tracking-[0.24em] text-white/50">我的手牌</p>
-              <div className="mt-4 overflow-x-auto pb-2">
-                <div className="flex min-h-[92px] w-max items-end">
+            <section className="rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(0,0,0,0.22))] p-4 backdrop-blur-sm">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.26em] text-white/40">我的手牌</p>
+                  <p className="mt-2 text-sm text-white/60">
+                    {state.currentPlayerIndex === 0 ? '现在轮到你组牌出手' : `${currentPlayer?.nickname ?? '玩家'} 正在思考`}
+                  </p>
+                </div>
+                <span className="rounded-full border border-white/10 bg-white/6 px-3 py-1 text-xs text-white/58">
+                  已选 {selectedIds.length} 张
+                </span>
+              </div>
+
+              <div className="mt-5 overflow-x-auto pb-3">
+                <div className="flex min-h-[122px] w-max items-end pr-4">
                   {humanPlayer.hand.map((card, index) => (
-                    <div key={card.id} className={index === 0 ? '' : '-ml-5'}>
+                    <div key={card.id} className={index === 0 ? '' : '-ml-4'}>
                       <PokerCard
                         card={card}
                         selected={selectedIds.includes(card.id)}
-                        onClick={state.currentPlayerIndex === 0 && state.gamePhase === 'playing' ? handleToggleCard : undefined}
+                        onClick={
+                          state.currentPlayerIndex === 0 && state.gamePhase === 'playing'
+                            ? handleToggleCard
+                            : undefined
+                        }
                       />
                     </div>
                   ))}
@@ -541,8 +641,26 @@ export default function PaodekuaiTable({
               </div>
             </section>
 
-            <GameActions actions={actionItems} />
-          </section>
+            <section className="rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(0,0,0,0.24))] p-4 backdrop-blur-sm">
+              <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.26em] text-white/40">出牌操作</p>
+                  <p className="mt-2 text-sm text-white/60">
+                    {state.gamePhase === 'finished'
+                      ? '本局已结束，可以直接再来一局'
+                      : state.currentPlayerIndex === 0
+                        ? '提示、跳过和出牌都会即时生效'
+                        : '等待其他玩家完成本轮操作'}
+                  </p>
+                </div>
+                <span className="rounded-full border border-white/10 bg-white/6 px-3 py-1 text-xs text-white/58">
+                  {selectedPattern ? `牌型 ${selectedPattern.type}` : '未成组'}
+                </span>
+              </div>
+
+              <GameActions actions={actionItems} />
+            </section>
+          </aside>
         </section>
       </main>
 
