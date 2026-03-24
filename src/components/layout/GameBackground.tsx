@@ -7,7 +7,7 @@ interface GameBackgroundProps {
 
 export default function GameBackground({ children, className = '' }: GameBackgroundProps) {
   return (
-    <div className={`relative min-h-screen w-screen overflow-hidden ${className}`}>
+    <div className={`relative min-h-screen w-full overflow-x-hidden ${className}`}>
       <div className="absolute inset-0 bg-[#0a1628]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(26,52,88,0.35)_0%,_rgba(10,22,40,0)_48%)]" />
       <div className="absolute inset-x-[-8%] bottom-[30%] h-[28%] rounded-[50%] bg-[#11263d]/75 blur-[1px]" />
@@ -17,7 +17,9 @@ export default function GameBackground({ children, className = '' }: GameBackgro
       <div className="absolute bottom-0 left-0 h-[46%] w-[20%] bg-[#081322]/85" style={{ clipPath: 'polygon(0 100%, 35% 25%, 70% 100%)' }} />
       <div className="absolute bottom-0 right-0 h-[52%] w-[24%] bg-[#06101d]/90" style={{ clipPath: 'polygon(35% 100%, 68% 20%, 100% 100%)' }} />
 
-      <div className="relative z-10 page-safe-area h-screen w-screen">{children}</div>
+      <div className="relative z-10 min-h-screen w-full overflow-x-hidden overflow-y-auto page-safe-area supports-[height:100dvh]:min-h-[100dvh]">
+        {children}
+      </div>
     </div>
   );
 }

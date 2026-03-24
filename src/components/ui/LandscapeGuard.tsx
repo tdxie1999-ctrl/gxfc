@@ -7,36 +7,12 @@ interface LandscapeGuardProps {
   disabled?: boolean;
 }
 
-type OrientationController = {
-  lock?: (
-    orientation:
-      | 'any'
-      | 'natural'
-      | 'landscape'
-      | 'portrait'
-      | 'portrait-primary'
-      | 'portrait-secondary'
-      | 'landscape-primary'
-      | 'landscape-secondary'
-  ) => Promise<void>;
-  unlock?: () => void;
-};
-
 export default function LandscapeGuard({ children, disabled = false }: LandscapeGuardProps) {
   const [isPortrait, setIsPortrait] = useState(false);
 
   useEffect(() => {
-    const orientation = window.screen?.orientation as unknown as OrientationController | undefined;
-
     if (disabled) {
       setIsPortrait(false);
-      if (typeof orientation?.unlock === 'function') {
-        try {
-          orientation.unlock();
-        } catch {
-          // 部分浏览器不允许解锁，忽略即可
-        }
-      }
       return;
     }
 
@@ -47,11 +23,6 @@ export default function LandscapeGuard({ children, disabled = false }: Landscape
     };
 
     onChange();
-    if (typeof orientation?.lock === 'function') {
-      void orientation.lock('landscape').catch(() => {
-        // 大多数移动浏览器需要全屏或不支持锁定，失败时退回到提示层
-      });
-    }
 
     if (typeof mediaQuery.addEventListener === 'function') {
       mediaQuery.addEventListener('change', onChange);
@@ -68,13 +39,6 @@ export default function LandscapeGuard({ children, disabled = false }: Landscape
         mediaQuery.removeListener(onChange);
       }
       window.removeEventListener('resize', onChange);
-      if (typeof orientation?.unlock === 'function') {
-        try {
-          orientation.unlock();
-        } catch {
-          // ignore
-        }
-      }
     };
   }, [disabled]);
 
@@ -82,12 +46,18 @@ export default function LandscapeGuard({ children, disabled = false }: Landscape
     <>
       {children}
       {!disabled && isPortrait && (
-        <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-5 bg-black/95 p-6 text-white">
-          <p className="text-center text-xl font-semibold">请将手机横屏使用</p>
-          <div className="relative h-14 w-24 rounded-2xl border-2 border-white/80">
-            <div className="absolute left-1/2 top-1/2 h-10 w-5 -translate-x-1/2 -translate-y-1/2 rounded-md border border-white animate-rotatePhone" />
+        <div className="pointer-events-none fixed inset-x-3 bottom-3 z-[9999] mx-auto max-w-sm rounded-2xl border border-[#f0c252]/30 bg-[linear-gradient(180deg,rgba(11,19,31,0.92),rgba(7,14,23,0.94))] px-4 py-3 text-white shadow-[0_18px_34px_rgba(0,0,0,0.35)] backdrop-blur-xl">
+          <div className="flex items-start gap-3">
+            <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#f0c252]/15 text-lg">
+              ↺
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-[#f6d46c]">已启用竖屏适配</p>
+              <p className="mt-1 text-xs leading-5 text-white/72">
+                现在手机横竖屏都能看。横屏更适合长牌桌，竖屏会自动改成堆叠布局。
+              </p>
+            </div>
           </div>
-          <p className="text-sm text-white/65">为保证牌桌体验，当前页面仅支持横屏</p>
         </div>
       )}
     </>

@@ -410,70 +410,55 @@ export default function DatongziTable({
 
   if (tablePhase !== 'playing' || !state || !humanPlayer || !opponent) {
     return (
-      <main className="mx-auto flex h-full w-full max-w-6xl flex-col gap-4 px-4 py-4 md:px-6">
-        <header className="rounded-3xl border border-white/15 bg-black/30 p-4 backdrop-blur-sm">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <p className="text-xs uppercase tracking-[0.28em] text-white/50">Phase 6 / 打筒子</p>
-              <h1 className="brand-gold-text mt-1 text-2xl font-black tracking-[0.2em]">房号 {safeRoomCode}</h1>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/70">
-                {tablePhase === 'waiting' ? '等待中' : '发牌中'}
-              </span>
-              <button
-                type="button"
-                onClick={handleExit}
-                className="rounded-2xl border border-white/15 bg-white/8 px-4 py-2 text-sm font-bold text-white transition hover:bg-white/12"
-              >
-                退出房间
-              </button>
-            </div>
-          </div>
-          <div className="mt-4 rounded-2xl bg-white/5 p-3 text-sm text-white/80">
-            <p>{statusText}</p>
-            <p className="mt-1 text-xs text-white/55">
-              先走完整流程：进房等待、准备、发牌、对战、结算。规则继续保持最小可玩。
-            </p>
-            {roomLabel ? <p className="mt-1 text-xs text-white/45">{roomLabel}</p> : null}
-          </div>
-        </header>
-
-        <section className="grid flex-1 gap-4 lg:grid-cols-[1.35fr_1fr]">
-          <section className="rounded-3xl border border-white/15 bg-black/25 p-5 backdrop-blur-sm">
-            <p className="text-xs uppercase tracking-[0.25em] text-white/50">本桌规则</p>
-            <div className="mt-3 space-y-2 text-sm text-white/80">
-              {ruleLines.map((rule) => (
-                <p key={rule}>{rule}</p>
-              ))}
-            </div>
-
-            <div className="mt-6 rounded-3xl border border-white/10 bg-white/5 p-5 text-center">
-              <p className="text-xs uppercase tracking-[0.28em] text-white/50">牌桌流程</p>
-              <h2 className="brand-gold-text mt-2 text-3xl font-black tracking-[0.2em]">恭喜发财</h2>
-              <p className="mt-3 text-sm text-white/75">打筒子 / 欢乐四喜（基础流程版）</p>
-              {tablePhase === 'dealing' ? (
-                <div className="mt-5">
-                  <div className="h-3 overflow-hidden rounded-full bg-white/10">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-[#F2994A] to-[#F2C94C]"
-                      style={{ width: `${dealingProgress}%` }}
-                    />
+      <main className="mx-auto flex min-h-full w-full max-w-[1360px] flex-col gap-4 px-3 py-4 md:px-5 md:py-5">
+        <header className="grid gap-4 xl:grid-cols-[minmax(0,1.35fr)_360px]">
+          <section className="overflow-hidden rounded-[34px] border border-white/15 bg-[linear-gradient(135deg,rgba(13,28,45,0.96),rgba(8,20,32,0.88))] shadow-[0_24px_52px_rgba(0,0,0,0.28)]">
+            <div className="border-b border-white/8 bg-[radial-gradient(circle_at_top_left,rgba(212,160,23,0.12),transparent_36%)] px-5 py-5 md:px-6">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="rounded-full border border-[#f0c252]/35 bg-[#f0c252]/10 px-3 py-1 text-xs font-semibold tracking-[0.22em] text-[#f6d46c]">
+                      双人对局
+                    </span>
+                    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.22em] text-white/55">
+                      打筒子
+                    </span>
                   </div>
-                  <p className="mt-3 text-sm text-white/70">发牌进度 {dealingProgress}%</p>
+                  <h1 className="brand-gold-text mt-4 text-3xl font-black tracking-[0.2em] md:text-4xl">房号 {safeRoomCode}</h1>
+                  <p className="mt-2 text-sm text-white/70">
+                    {roomLabel || '双人抢分房'} · 开桌后自动发牌，进入真实出牌流程
+                  </p>
                 </div>
-              ) : (
-                <div className="mt-5 flex items-center justify-center gap-3 text-sm text-white/70">
-                  <span className="rounded-full bg-white/10 px-3 py-2">你 {selfReady ? '已准备' : '等待中'}</span>
-                  <span className="rounded-full bg-white/10 px-3 py-2">
-                    {opponentName} {opponentReady ? '已准备' : '等待中'}
-                  </span>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { label: '状态', value: tablePhase === 'waiting' ? '待准备' : '发牌中' },
+                    { label: '底分', value: `${engineConfig.basePoint}分` },
+                    { label: '手牌数', value: `${engineConfig.handCardCount}张` },
+                    { label: '托管', value: `${engineConfig.autoPlaySeconds}s` },
+                  ].map((item) => (
+                    <div key={item.label} className="rounded-[22px] border border-white/10 bg-black/25 px-4 py-3">
+                      <p className="text-[11px] uppercase tracking-[0.2em] text-white/35">{item.label}</p>
+                      <p className="mt-2 text-xl font-black text-white">{item.value}</p>
+                    </div>
+                  ))}
                 </div>
-              )}
+              </div>
+
+              <div className="mt-5 rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(0,0,0,0.18))] p-4">
+                <p className="text-xs uppercase tracking-[0.24em] text-white/35">开桌播报</p>
+                <p className="mt-3 text-2xl font-black text-white">{statusText}</p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {ruleLines.map((rule) => (
+                    <span key={rule} className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-xs text-white/78">
+                      {rule}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
           </section>
 
-          <section className="space-y-4">
+          <div className="grid gap-4 self-start xl:sticky xl:top-4">
             <PlayerSeat
               name={opponentName}
               handCount={waitingHandCount}
@@ -492,36 +477,81 @@ export default function DatongziTable({
               score={0}
               isCurrent={false}
             />
+          </div>
+        </header>
 
-            <div className="rounded-3xl border border-white/15 bg-black/25 p-4 backdrop-blur-sm">
-              {tablePhase === 'waiting' ? (
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <button
-                    type="button"
-                    onClick={handlePrepare}
-                    className={`h-12 rounded-2xl text-sm font-bold text-white ${
-                      selfReady
-                        ? 'border border-white/15 bg-white/10'
-                        : 'bg-gradient-to-r from-[#F2994A] to-[#F2C94C]'
-                    }`}
-                  >
-                    {selfReady ? '取消准备' : '准 备'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleExit}
-                    className="h-12 rounded-2xl bg-gradient-to-r from-[#2f9e62] to-[#51b97f] text-sm font-bold text-white"
-                  >
-                    退出房间
-                  </button>
-                </div>
+        <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
+          <section className="rounded-[34px] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(0,0,0,0.24))] p-5 backdrop-blur-sm">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+              <div className="max-w-xl">
+                <p className="text-xs uppercase tracking-[0.24em] text-white/45">开局阶段</p>
+                <h2 className="mt-2 text-2xl font-black text-white">对家就位后自动切牌发牌</h2>
+                <p className="mt-3 text-sm leading-7 text-white/68">
+                  这张桌现在走完整房间流程：准备、补位、发牌、出牌、结算。等待时会展示双方准备状态，发牌中则显示进度。
+                </p>
+              </div>
+              <div className="rounded-[28px] border border-white/10 bg-black/20 px-5 py-4 text-center">
+                <p className="text-xs uppercase tracking-[0.2em] text-white/40">桌面阶段</p>
+                <p className="mt-2 text-3xl font-black text-[#f6d46c]">{tablePhase === 'waiting' ? 'WAIT' : 'DEAL'}</p>
+              </div>
+            </div>
+
+            <div className="mt-6 rounded-[30px] border border-white/10 bg-black/20 p-5">
+              {tablePhase === 'dealing' ? (
+                <>
+                  <div className="h-3 overflow-hidden rounded-full bg-white/10">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-[#F2994A] to-[#F2C94C]"
+                      style={{ width: `${dealingProgress}%` }}
+                    />
+                  </div>
+                  <div className="mt-4 flex items-center justify-between gap-3 text-sm text-white/72">
+                    <span>正在切牌发牌</span>
+                    <span>{dealingProgress}%</span>
+                  </div>
+                </>
               ) : (
-                <div className="text-center text-sm text-white/70">
-                  <p>系统正在切牌并发牌。</p>
-                  <p className="mt-2 text-xs text-white/50">发牌完成后自动进入出牌阶段。</p>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-[24px] border border-white/10 bg-white/5 px-4 py-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-white/35">你的状态</p>
+                    <p className="mt-2 text-xl font-black text-white">{selfReady ? '已准备' : '待准备'}</p>
+                  </div>
+                  <div className="rounded-[24px] border border-white/10 bg-white/5 px-4 py-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-white/35">对家状态</p>
+                    <p className="mt-2 text-xl font-black text-white">{opponentReady ? '已准备' : '待准备'}</p>
+                  </div>
                 </div>
               )}
             </div>
+          </section>
+
+          <section className="rounded-[32px] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(0,0,0,0.24))] p-4 backdrop-blur-sm">
+            {tablePhase === 'waiting' ? (
+              <div className="grid gap-3">
+                <button
+                  type="button"
+                  onClick={handlePrepare}
+                  className={`h-12 rounded-2xl text-sm font-bold text-white ${
+                    selfReady
+                      ? 'border border-white/15 bg-white/10'
+                      : 'bg-gradient-to-r from-[#F2994A] to-[#F2C94C] text-[#2c1b04]'
+                  }`}
+                >
+                  {selfReady ? '取消准备' : '准备开局'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleExit}
+                  className="h-12 rounded-2xl border border-white/12 bg-white/8 text-sm font-bold text-white transition hover:bg-white/12"
+                >
+                  退出房间
+                </button>
+              </div>
+            ) : (
+              <div className="rounded-[24px] border border-white/10 bg-black/20 px-4 py-4 text-sm text-white/72">
+                发牌完成后自动进入出牌阶段，不需要额外点击开始。
+              </div>
+            )}
           </section>
         </section>
       </main>
@@ -530,157 +560,198 @@ export default function DatongziTable({
 
   return (
     <>
-      <main className="mx-auto flex h-full w-full max-w-7xl flex-col gap-4 px-4 py-4 md:px-6">
-        <header className="grid gap-4 lg:grid-cols-[1.55fr_1fr]">
-          <section className="rounded-3xl border border-white/15 bg-black/30 p-4 backdrop-blur-sm">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <p className="text-xs uppercase tracking-[0.28em] text-white/50">Phase 6 / 打筒子</p>
-                <h1 className="brand-gold-text mt-1 text-2xl font-black tracking-[0.2em]">房号 {safeRoomCode}</h1>
-              </div>
-              <div className="flex flex-wrap items-center gap-3 text-sm text-white/80">
-                <span>牌型 {formatCurrentPattern(state)}</span>
-                <span>{state.bottomCards.length} 底牌</span>
-                <span>当前 {currentPlayer?.nickname ?? '未知'}</span>
-                <button
-                  type="button"
-                  onClick={handleExit}
-                  className="rounded-2xl border border-white/15 bg-white/8 px-3 py-2 text-xs font-bold text-white transition hover:bg-white/12"
-                >
-                  退出房间
-                </button>
-              </div>
-            </div>
-            <div className="mt-4 rounded-2xl bg-white/5 p-3 text-sm text-white/80">
-              <p>{statusText}</p>
-              <p className="mt-1 text-xs text-white/55">
-                当前为最小可玩规则：单张 / 对子 / 三条 / 顺子 / 筒子，结算按喜分和剩余手牌计算。
-              </p>
-              {roomLabel ? <p className="mt-1 text-xs text-white/45">{roomLabel}</p> : null}
-            </div>
-          </section>
-
-          <section className="overflow-hidden rounded-2xl border border-white/15 bg-black/30 backdrop-blur-sm">
-            <table className="w-full text-left text-sm text-white/85">
-              <thead className="bg-white/10 text-xs uppercase tracking-[0.2em] text-white/60">
-                <tr>
-                  <th className="px-3 py-2">玩家</th>
-                  <th className="px-3 py-2">手牌</th>
-                  <th className="px-3 py-2">喜分</th>
-                  <th className="px-3 py-2">总分</th>
-                </tr>
-              </thead>
-              <tbody>
-                {state.players.map((player, index) => (
-                  <tr
-                    key={player.userId}
-                    className={index === state.currentPlayerIndex ? 'bg-[#D4A017]/10' : 'border-t border-white/10'}
-                  >
-                    <td className="px-3 py-2 font-medium">{player.nickname}</td>
-                    <td className="px-3 py-2">{player.hand.length}</td>
-                    <td className="px-3 py-2">{player.xi}</td>
-                    <td className="px-3 py-2">{player.score}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </section>
-        </header>
-
-        <section className="grid gap-4 lg:grid-cols-[1.2fr_1fr]">
-          <div className="grid gap-4">
-            <div className="grid gap-4 md:grid-cols-[1fr_auto]">
-              <div className="space-y-3">
-                <PlayerSeat
-                  name={opponent.nickname}
-                  handCount={opponent.hand.length}
-                  huXi={opponent.xi}
-                  menZi={opponent.playedPatterns.length}
-                  score={opponent.score}
-                  isCurrent={state.currentPlayerIndex === 1}
-                  isBot={opponent.isBot}
-                />
-                <div className="rounded-2xl border border-white/10 bg-black/20 p-3">
-                  <div className="mb-2 text-xs text-white/60">对手手牌</div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {opponent.hand.slice(0, 10).map((card) => (
-                      <PokerCard key={card.id} card={card} faceDown compact />
-                    ))}
-                    {opponent.hand.length > 10 ? (
-                      <div className="flex items-center rounded-lg bg-white/10 px-2 text-xs text-white/70">
-                        +{opponent.hand.length - 10}
-                      </div>
-                    ) : null}
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-2xl border border-white/10 bg-black/20 p-3">
-                <div className="mb-2 text-xs text-white/60">底牌</div>
-                <div className="flex max-w-[180px] flex-wrap gap-1.5">
-                  {state.bottomCards.map((card) => (
-                    <PokerCard key={`bottom-${card.id}`} card={card} faceDown compact />
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <section className="rounded-3xl border border-white/15 bg-black/25 p-4 backdrop-blur-sm">
-              <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+      <main className="mx-auto flex min-h-full w-full max-w-[1440px] flex-col gap-4 px-3 py-4 md:px-5 md:py-5">
+        <header className="grid gap-4 xl:grid-cols-[minmax(0,1.35fr)_360px]">
+          <section className="overflow-hidden rounded-[34px] border border-white/15 bg-[linear-gradient(135deg,rgba(13,28,45,0.96),rgba(8,20,32,0.88))] shadow-[0_24px_52px_rgba(0,0,0,0.28)]">
+            <div className="border-b border-white/8 bg-[radial-gradient(circle_at_top_left,rgba(212,160,23,0.12),transparent_36%)] px-5 py-5 md:px-6">
+              <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.25em] text-white/50">中央出牌区</p>
-                  <p className="mt-1 text-sm text-white/70">
-                    {state.lastPlay
-                      ? `${state.players[state.lastPlay.playerIndex]?.nickname ?? '玩家'} 上一手`
-                      : '当前无人出牌'}
-                  </p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="rounded-full border border-[#f0c252]/35 bg-[#f0c252]/10 px-3 py-1 text-xs font-semibold tracking-[0.22em] text-[#f6d46c]">
+                      真实牌局
+                    </span>
+                    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.22em] text-white/55">
+                      打筒子
+                    </span>
+                  </div>
+                  <h1 className="brand-gold-text mt-4 text-3xl font-black tracking-[0.2em] md:text-4xl">房号 {safeRoomCode}</h1>
+                  <p className="mt-2 text-sm text-white/70">{roomLabel || '双人抢分局'} · 跟牌、压牌、结算已经串起来</p>
                 </div>
-                {selectedPattern ? (
-                  <span className="rounded-full bg-[#D4A017]/20 px-3 py-1 text-xs text-[#f6d46c]">
-                    已选牌型：{selectedPattern.label}
-                  </span>
-                ) : (
-                  <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/60">未选择牌组</span>
-                )}
-              </div>
 
-              <div className="min-h-[88px] rounded-2xl border border-dashed border-white/10 bg-white/5 p-3">
-                <div className="flex flex-wrap gap-2">
-                  {state.lastPlay?.cards.map((card) => <PokerCard key={`last-${card.id}`} card={card} />)}
-                </div>
-              </div>
-            </section>
-          </div>
-
-          <section className="space-y-4">
-            <PlayerSeat
-              name={humanPlayer.nickname}
-              handCount={humanPlayer.hand.length}
-              huXi={humanPlayer.xi}
-              menZi={humanPlayer.playedPatterns.length}
-              score={humanPlayer.score}
-              isCurrent={state.currentPlayerIndex === 0}
-            />
-
-            <section className="rounded-3xl border border-white/15 bg-black/25 p-4 backdrop-blur-sm">
-              <p className="text-xs uppercase tracking-[0.24em] text-white/50">我的手牌</p>
-              <div className="mt-4 overflow-x-auto pb-2">
-                <div className="flex min-h-[92px] w-max items-end">
-                  {humanPlayer.hand.map((card, index) => (
-                    <div key={card.id} className={index === 0 ? '' : '-ml-5'}>
-                      <PokerCard
-                        card={card}
-                        selected={selectedIds.includes(card.id)}
-                        onClick={state.currentPlayerIndex === 0 && state.gamePhase === 'playing' ? handleToggleCard : undefined}
-                      />
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  {[
+                    { label: '牌型', value: formatCurrentPattern(state) },
+                    { label: '底牌', value: String(state.bottomCards.length) },
+                    { label: '当前', value: currentPlayer?.nickname ?? '未知' },
+                    {
+                      label: '已出',
+                      value: `${state.players.reduce((count, player) => count + player.playedPatterns.length, 0)}手`,
+                    },
+                  ].map((item) => (
+                    <div key={item.label} className="rounded-[24px] border border-white/10 bg-black/25 px-4 py-3">
+                      <p className="text-[11px] uppercase tracking-[0.2em] text-white/35">{item.label}</p>
+                      <p className="mt-2 text-xl font-black text-white">{item.value}</p>
                     </div>
                   ))}
                 </div>
               </div>
+
+              <div className="mt-5 rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(0,0,0,0.18))] p-4">
+                <p className="text-xs uppercase tracking-[0.24em] text-white/35">局内播报</p>
+                <p className="mt-3 text-2xl font-black text-white">{statusText}</p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {ruleLines.map((rule) => (
+                    <span key={rule} className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-xs text-white/78">
+                      {rule}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="rounded-[30px] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(0,0,0,0.22))] p-4 backdrop-blur-sm">
+            <div className="space-y-3">
+              {state.players.map((player, index) => (
+                <div
+                  key={player.userId}
+                  className={`rounded-[24px] border px-4 py-3 ${
+                    index === state.currentPlayerIndex
+                      ? 'border-[#f0c252]/35 bg-[#f0c252]/10'
+                      : 'border-white/10 bg-black/20'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-bold text-white">{player.nickname}</p>
+                      <p className="mt-1 text-xs text-white/55">
+                        手牌 {player.hand.length} · 喜分 {player.xi}
+                      </p>
+                    </div>
+                    <p className="text-2xl font-black text-[#f6d46c]">{player.score >= 0 ? '+' : ''}{player.score}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={handleExit}
+              className="mt-4 h-12 w-full rounded-2xl border border-white/12 bg-white/8 text-sm font-bold text-white transition hover:bg-white/12"
+            >
+              退出房间
+            </button>
+          </section>
+        </header>
+
+        <section className="grid gap-4 xl:grid-cols-[320px_minmax(0,1fr)]">
+          <aside className="space-y-4">
+            <PlayerSeat
+              name={opponent.nickname}
+              handCount={opponent.hand.length}
+              huXi={opponent.xi}
+              menZi={opponent.playedPatterns.length}
+              score={opponent.score}
+              isCurrent={state.currentPlayerIndex === 1}
+              isBot={opponent.isBot}
+            />
+
+            <section className="rounded-[30px] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(0,0,0,0.24))] p-4 backdrop-blur-sm">
+              <p className="text-xs uppercase tracking-[0.22em] text-white/45">对手手牌</p>
+              <div className="mt-4 flex flex-wrap gap-1.5">
+                {opponent.hand.slice(0, 10).map((card) => (
+                  <PokerCard key={card.id} card={card} faceDown compact />
+                ))}
+                {opponent.hand.length > 10 ? (
+                  <div className="flex items-center rounded-xl border border-white/10 bg-white/5 px-3 text-xs text-white/70">
+                    +{opponent.hand.length - 10}
+                  </div>
+                ) : null}
+              </div>
             </section>
 
-            <GameActions actions={actionItems} />
-          </section>
+            <section className="rounded-[30px] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(0,0,0,0.24))] p-4 backdrop-blur-sm">
+              <p className="text-xs uppercase tracking-[0.22em] text-white/45">底牌区</p>
+              <div className="mt-4 flex flex-wrap gap-1.5">
+                {state.bottomCards.map((card) => (
+                  <PokerCard key={`bottom-${card.id}`} card={card} faceDown compact />
+                ))}
+              </div>
+            </section>
+          </aside>
+
+          <div className="space-y-4">
+            <section className="rounded-[34px] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(0,0,0,0.24))] p-4 backdrop-blur-sm">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.24em] text-white/45">中央出牌区</p>
+                  <p className="mt-1 text-sm text-white/68">
+                    {state.lastPlay
+                      ? `${state.players[state.lastPlay.playerIndex]?.nickname ?? '玩家'} 上一手`
+                      : '等待首个牌型落桌'}
+                  </p>
+                </div>
+                {selectedPattern ? (
+                  <span className="rounded-full bg-[#D4A017]/18 px-3 py-1 text-xs text-[#f6d46c]">
+                    已选牌型：{selectedPattern.label}
+                  </span>
+                ) : (
+                  <span className="rounded-full bg-white/8 px-3 py-1 text-xs text-white/60">未选择牌组</span>
+                )}
+              </div>
+
+              <div className="mt-4 rounded-[28px] border border-dashed border-white/10 bg-[linear-gradient(180deg,rgba(13,28,45,0.8),rgba(7,16,27,0.92))] p-4">
+                <div className="min-h-[126px]">
+                  <div className="flex flex-wrap gap-2">
+                    {state.lastPlay?.cards.map((card) => <PokerCard key={`last-${card.id}`} card={card} />)}
+                  </div>
+                  {!state.lastPlay ? (
+                    <p className="mt-6 text-sm text-white/45">首位玩家出牌后，这里会展示桌面牌型。</p>
+                  ) : null}
+                </div>
+              </div>
+            </section>
+
+            <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
+              <section className="rounded-[34px] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(0,0,0,0.24))] p-4 backdrop-blur-sm">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.24em] text-white/45">我的手牌</p>
+                    <p className="mt-1 text-sm text-white/65">竖屏下可横向拖动，点牌组成牌型再出牌</p>
+                  </div>
+                  <span className="rounded-full bg-white/8 px-3 py-1 text-xs text-white/60">
+                    已选 {selectedIds.length} 张
+                  </span>
+                </div>
+
+                <div className="mt-4 overflow-x-auto pb-2">
+                  <div className="flex min-h-[112px] w-max items-end">
+                    {humanPlayer.hand.map((card, index) => (
+                      <div key={card.id} className={index === 0 ? '' : '-ml-5'}>
+                        <PokerCard
+                          card={card}
+                          selected={selectedIds.includes(card.id)}
+                          onClick={state.currentPlayerIndex === 0 && state.gamePhase === 'playing' ? handleToggleCard : undefined}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </section>
+
+              <div className="space-y-4">
+                <PlayerSeat
+                  name={humanPlayer.nickname}
+                  handCount={humanPlayer.hand.length}
+                  huXi={humanPlayer.xi}
+                  menZi={humanPlayer.playedPatterns.length}
+                  score={humanPlayer.score}
+                  isCurrent={state.currentPlayerIndex === 0}
+                />
+
+                <GameActions actions={actionItems} />
+              </div>
+            </section>
+          </div>
         </section>
       </main>
 

@@ -3,7 +3,6 @@
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Modal from '@/components/ui/Modal';
-import { supabase } from '@/lib/supabase/client';
 import { useAuthStore } from '@/lib/store/useAuth';
 import { type GameType, useGameStore } from '@/lib/store/useGame';
 import { useToastStore } from '@/lib/store/useToast';
@@ -272,38 +271,6 @@ export default function CreateRoomModal({ open, onClose }: { open: boolean; onCl
             : undefined,
       };
 
-      if (activeTab === 'paodekuai') {
-        const response = await fetch('/api/paodekuai/rooms', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            baseScore,
-            config: nextConfig,
-          }),
-        });
-        const result = (await response.json().catch(() => ({}))) as {
-          roomId?: string;
-          diamondsAfter?: number;
-          message?: string;
-        };
-
-        if (!response.ok || !result.roomId) {
-          pushToast(result.message ?? '创建真实跑得快房间失败', 'error');
-          return;
-        }
-
-        if (typeof result.diamondsAfter === 'number') {
-          await updateProfile({ diamonds: result.diamondsAfter });
-        }
-
-        pushToast('跑得快真实房间创建成功，已扣除2钻石', 'success');
-        onClose();
-        router.push(`/room/${result.roomId}`);
-        return;
-      }
-
       const result = await createRoom({
         gameType: activeTab,
         baseScore,
@@ -318,22 +285,16 @@ export default function CreateRoomModal({ open, onClose }: { open: boolean; onCl
         return;
       }
 
-      const nextDiamonds = Math.max(0, profile.diamonds - ROOM_COST);
-      await updateProfile({ diamonds: nextDiamonds });
+      if (typeof result.diamondsAfter === 'number') {
+        await updateProfile({ diamonds: result.diamondsAfter });
+      }
 
-      await supabase.from('diamond_logs').insert({
-        user_id: user.id,
-        amount: -ROOM_COST,
-        diamonds_after: nextDiamonds,
-        type: 'room_create',
-        description: `创建${activeTab}房间`,
-      });
-
-      pushToast('创建房间成功，已扣除2钻石', 'success');
+      const activeLabel = tabs.find((item) => item.key === activeTab)?.label ?? '房间';
+      pushToast(`${activeLabel}创建成功，已扣除2钻石`, 'success');
       onClose();
       router.push(`/room/${result.roomId}`);
     } catch {
-      pushToast(activeTab === 'paodekuai' ? '创建真实跑得快房间失败' : '创建房间失败', 'error');
+      pushToast('创建房间失败', 'error');
     } finally {
       setCreating(false);
     }

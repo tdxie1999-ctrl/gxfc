@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import BallNumber from "@/components/lottery/BallNumber";
 import BetPanel from "@/components/lottery/BetPanel";
 import CountdownTimer from "@/components/lottery/CountdownTimer";
@@ -24,6 +25,7 @@ function calculateRemainingSeconds(closesAt: string, fallback: number) {
 }
 
 export default function LotteryPage() {
+  const router = useRouter();
   const initialized = useLotteryStore((state) => state.initialized);
   const loading = useLotteryStore((state) => state.loading);
   const settling = useLotteryStore((state) => state.settling);
@@ -98,14 +100,26 @@ export default function LotteryPage() {
   const countdownStatus = settling ? "开奖中" : secondsLeft <= 0 ? "已封盘" : "投注中";
 
   return (
-    <main className="h-screen w-full overflow-y-auto bg-gradient-to-b from-[#4f0b0b] via-[#6a1313] to-[#2c0404] px-3 py-4 text-white">
+    <main className="min-h-screen w-full overflow-y-auto bg-gradient-to-b from-[#4f0b0b] via-[#6a1313] to-[#2c0404] px-3 py-4 text-white">
       <div className="mx-auto flex w-full max-w-[440px] flex-col gap-3">
+        <div className="flex items-center justify-between gap-3 rounded-2xl border border-[#f8c675]/35 bg-black/20 px-3 py-3 shadow-lg shadow-black/20">
+          <button
+            type="button"
+            onClick={() => router.push('/lobby')}
+            className="rounded-xl border border-[#f8c675]/35 bg-[#6d1111]/70 px-3 py-2 text-sm font-semibold text-[#ffe8bf]"
+          >
+            ← 返回大厅
+          </button>
+          <div className="text-right">
+            <p className="text-[11px] uppercase tracking-[0.22em] text-[#ffd79d]/70">Lottery</p>
+            <p className="text-sm font-semibold text-[#fff1d2]">购彩与封盘页</p>
+          </div>
+        </div>
+
         <header className="rounded-2xl border border-[#f8c675]/45 bg-gradient-to-r from-[#9b2323] to-[#5a1010] px-4 py-4 shadow-lg shadow-black/25">
           <h1 className="text-center text-xl font-black tracking-[0.15em] text-[#ffd457]">澳门六合彩</h1>
           <p className="mt-1 text-center text-sm font-semibold text-[#fff0d5]">第 {currentIssueNo} 期</p>
-          <p className="mt-1 text-center text-xs text-[#ffe4bf]">
-            Phase 7 · 竖屏优先页面（独立闭环版）
-          </p>
+          <p className="mt-1 text-center text-xs text-[#ffe4bf]">实时倒计时、开奖回看、当期下注统一在这一页完成</p>
           <div className="mt-3 flex justify-center">
             <span className="rounded-full bg-black/20 px-3 py-1 text-xs font-semibold text-[#ffe4bf]">
               {countdownStatus}
@@ -145,8 +159,8 @@ export default function LotteryPage() {
 
         <section className="rounded-2xl border border-[#f8c675]/45 bg-gradient-to-br from-[#fff7e6] to-[#ffe9c7] p-4 text-[#5d220f] shadow">
           <div className="mb-2 flex items-center justify-between">
-            <h2 className="text-sm font-semibold tracking-[0.08em]">12生肖对应表（测试）</h2>
-            <span className="text-xs text-[#8b3f22]">Phase 9 改后台配置</span>
+            <h2 className="text-sm font-semibold tracking-[0.08em]">12生肖对应表</h2>
+            <span className="text-xs text-[#8b3f22]">号码速查</span>
           </div>
           <div className="space-y-1">
             {ZODIAC_LIST.map((zodiac) => (

@@ -34,6 +34,7 @@ interface CreateRoomPayload {
 interface JoinRoomResult {
   ok: boolean;
   roomId?: string;
+  diamondsAfter?: number;
   message: string;
 }
 
@@ -116,10 +117,6 @@ function randomFrom<T>(items: T[]) {
 
 function isGameType(value: string): value is GameType {
   return value === 'paodekuai' || value === 'datongzi' || value === 'fangpaofa';
-}
-
-function createRoomCode() {
-  return `${Math.floor(100000 + Math.random() * 900000)}`;
 }
 
 function todayKey() {
@@ -376,58 +373,6 @@ async function fetchRoomWithPlayersByCode(roomCode: string) {
   };
 }
 
-async function tryCreateRoomRecord(input: {
-  gameType: GameType;
-  baseScore: number;
-  config?: Record<string, unknown>;
-  hostId: string;
-  hostName: string;
-}) {
-  for (let attempt = 0; attempt < 6; attempt += 1) {
-    const roomCode = createRoomCode();
-    const insertPayload = {
-      room_code: roomCode,
-      game_type: input.gameType,
-      status: 'waiting',
-      config: {
-        ...(input.config ?? {}),
-        baseScore: input.baseScore,
-        hostName: input.hostName,
-      },
-      host_id: input.hostId,
-      diamond_cost: 2,
-      max_players: gameMeta[input.gameType].maxPlayers,
-      updated_at: new Date().toISOString(),
-    };
-
-    const { data, error } = await supabase
-      .from('rooms')
-      .insert(insertPayload)
-      .select('id, room_code, game_type, status, config, host_id, diamond_cost, max_players, created_at, updated_at')
-      .single();
-
-    if (error) {
-      const message = error.message.toLowerCase();
-
-      if ((message.includes('duplicate') || message.includes('unique')) && attempt < 5) {
-        continue;
-      }
-
-      throw error;
-    }
-
-    const room = normalizeRoomRow(data as Record<string, unknown>);
-
-    if (!room) {
-      throw new Error('房间数据异常');
-    }
-
-    return room;
-  }
-
-  throw new Error('房间号生成失败，请重试');
-}
-
 async function insertCurrentUserIntoRoom(room: RoomRow, identity: PlayerIdentity) {
   const occupiedSeats = new Set<number>();
 
@@ -545,31 +490,34 @@ export const useGameStore = create<GameState>((set, get) => ({
     }
 
     try {
-      const room = await tryCreateRoomRecord({
-        gameType,
-        baseScore,
-        config,
-        hostId: identity.userId,
-        hostName,
+      const response = await fetch('/api/rooms', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          gameType,
+          baseScore,
+          config,
+          hostName: hostName || identity.displayName,
+          hostAvatar: hostAvatar || identity.avatarUrl,
+        }),
       });
 
-      try {
-        await insertCurrentUserIntoRoom(room, {
-          userId: identity.userId,
-          displayName: hostName || identity.displayName,
-          avatarUrl: hostAvatar || identity.avatarUrl,
-        });
-      } catch (seatError) {
-        await supabase
-          .from('rooms')
-          .update({
-            status: 'dissolved',
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', room.id)
-          .eq('host_id', identity.userId);
+      const result = (await response.json().catch(() => null)) as
+        | {
+            ok?: boolean;
+            roomId?: string;
+            diamondsAfter?: number;
+            message?: string;
+          }
+        | null;
 
-        throw seatError;
+      if (!response.ok || !result?.ok || !result.roomId) {
+        return {
+          ok: false,
+          message: result?.message ?? '创建房间失败',
+        };
       }
 
       const label = `${baseScore}分 ${gameMeta[gameType].title}`;
@@ -577,13 +525,14 @@ export const useGameStore = create<GameState>((set, get) => ({
       await get().refreshRooms();
 
       set({
-        currentRoomId: room.id,
+        currentRoomId: result.roomId,
         lastPlayedLabel: label,
       });
 
       return {
         ok: true,
-        roomId: room.id,
+        roomId: result.roomId,
+        diamondsAfter: result.diamondsAfter,
         message: '房间创建成功',
       };
     } catch (error) {
